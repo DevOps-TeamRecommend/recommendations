@@ -1,3 +1,11 @@
+#Vagrant Files - Added by Devneel
+vagrant
+
+
+########################################################
+#### EVERYTHING BELOW HERE CAME FROM A DEFAULT FILE ####
+########################################################
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
