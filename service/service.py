@@ -1,7 +1,14 @@
 """
-My Service
+RECOMMENDATIONS Service
 
-Describe what your service does here
+Paths:
+------
+GET /recommendation - Returns a list all of the Recommendations ######################## CLAIRE - TODO
+GET /recommendations/{id} - Returns the Recommendation with a given id number ########## CLAIRE - TODO
+POST /recommendations - creates a new Recommendation record in the database ############ GEORGE - TODO
+PUT /recommendations/{id} - updates a Recommendation record in the database ############ DEV - TODO
+DELETE /recommendations/{id} - deletes a Recommendation record in the database ######### AJ - TODO
+
 """
 
 import os
@@ -13,7 +20,7 @@ from flask_api import status  # HTTP Status Codes
 # For this example we'll use SQLAlchemy, a popular ORM that supports a
 # variety of backends including SQLite, MySQL, and PostgreSQL
 from flask_sqlalchemy import SQLAlchemy
-from service.models import YourResourceModel, DataValidationError
+from service.models import Recommendation, DataValidationError
 
 # Import Flask application
 from . import app
@@ -34,4 +41,4 @@ def index():
 def init_db():
     """ Initialies the SQLAlchemy app """
     global app
-    YourResourceModel.init_db(app)
+    Recommendation.init_db(app)
