@@ -29,61 +29,67 @@ class Recommendation(db.Model):
     product_1 = db.Column(db.Integer) # id of first product
     product_2 = db.Column(db.Integer) # id of second product
     recommendation_type = db.Column(db.String(63)) # Up-sell: more expensive version of same product, Cross sell: similar price of same product, accessory: item that goes with product
-    active = db.Column(db.Integer) # 0 is FALSE and 1 is TRUE
+    active = db.Column(db.Boolean) # Whether recommendation still exists or was removed
 
 
     # DEV
     def __repr__(self):
         return "Recommendation id=[%s]>" % (self.id)
 
-    # GEORGE
+    # AJ
     def create(self):
         """
-        Creates a <your resource name> to the database
+        Creates a recommendation to the database
         """
-        logger.info("Creating %s", self.name)
+        logger.info("Creating %s", self.id)
         self.id = None  # id must be none to generate next primary key
         db.session.add(self)
         db.session.commit()
 
-    # GEORGE
     def save(self):
         """
-        Updates a <your resource name> to the database
+        Updates a recommendation to the database
         """
-        logger.info("Saving %s", self.name)
+        logger.info("Saving %s", self.id)
         db.session.commit()
 
     # AJ
     def delete(self):
-        """ Removes a <your resource name> from the data store """
-        logger.info("Deleting %s", self.name)
+        """ Removes a recommendation from the data store """
+        logger.info("Deleting %s", self.id)
         db.session.delete(self)
         db.session.commit()
 
-    # CLAIRE
+    # AJ
     def serialize(self):
-        """ Serializes a <your resource name> into a dictionary """
+        """ Serializes a recommendation into a dictionary """
         return {
             "id": self.id,
-            "name": self.name
+            "product_1": self.product_1,
+            "product_2": self.product_2,
+            "recommendation_type": self.recommendation_type,
+            "active": self.active,
         }
 
-    # CLAIRE
+    # AJ
     def deserialize(self, data):
         """
-        Deserializes a <your resource name> from a dictionary
+        Deserializes a recommendation from a dictionary
 
         Args:
             data (dict): A dictionary containing the resource data
         """
         try:
-            self.name = data["name"]
+            self.id = data["id"]
+            self.product_1 = data["product_1"]
+            self.product_2 = data["product_2"]
+            self.recommendation_type = data["recommendation_type"]
+            self.active = data["active"]
         except KeyError as error:
-            raise DataValidationError("Invalid <your resource name>: missing " + error.args[0])
+            raise DataValidationError("Invalid recommendation: missing " + error.args[0])
         except TypeError as error:
             raise DataValidationError(
-                "Invalid <your resource name>: body of request contained" "bad or no data"
+                "Invalid recommendation: body of request contained" "bad or no data"
             )
         return self
 
@@ -107,6 +113,7 @@ class Recommendation(db.Model):
         logger.info("Processing all Recommendations")
         return cls.query.all()
 
+# GEORGE - These are complete but they are part of the read story
     @classmethod
     def find(cls, by_id):
         """ Finds a recommendation by it's ID """
@@ -119,6 +126,7 @@ class Recommendation(db.Model):
         logger.info("Processing lookup or 404 for id %s ...", by_id)
         return cls.query.get_or_404(by_id)
 
+#CLAIRE
     @classmethod
     def find_by_active(cls, active):
         """ Returns all recommendations with the given active status
