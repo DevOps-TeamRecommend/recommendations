@@ -5,6 +5,7 @@ Test cases for Recommendations Model
 import logging
 import unittest
 import os
+from werkzeug.exceptions import NotFound
 from service.models import Recommendation, DataValidationError, db
 from service import app
 from .factories import RecommendationFactory
@@ -73,9 +74,7 @@ class TestRecommendation(unittest.TestCase):
         self.assertEqual(recommendation.id, 1)
         recommendations = Recommendation.all()
         self.assertEqual(len(recommendations), 1)
-    
-    
-    
+
     def test_delete_a_recommendation(self):
         """ Delete a Recommendation """
         recommendation = RecommendationFactory()
@@ -118,3 +117,51 @@ class TestRecommendation(unittest.TestCase):
         data = "this is not a dictionary"
         Recommendation = RecommendationFactory()
         self.assertRaises(DataValidationError, Recommendation.deserialize, data)
+
+#CLAIRE
+    def test_find_by_recommendation_type(self):
+        """ Find recommendation by recommendation_type """
+        Recommendation(id=1, product_1=200, product_2=300, recommendation_type = "upsell", active = True).create()
+        Recommendation(id=2, product_1=300, product_2=400, recommendation_type = "crosssell", active = True).create()
+        recommendations = Recommendation.find_by_recommendation_type("upsell")
+
+    def test_find_by_id(self):
+        """ Find recommendation by id """
+        Recommendation(id=10, product_1=205, product_2=310, recommendation_type = "upsell", active = True).create()
+        Recommendation(id=20, product_1=305, product_2=405, recommendation_type = "crosssell", active = True).create()
+        recommendations = Recommendation.find(10)
+
+
+    def test_find_by_product_1(self):
+        """ Find recommendation by product_1 id """
+        Recommendation(id=3, product_1=400, product_2=600, recommendation_type = "upsell", active = True).create()
+        Recommendation(id=4, product_1=500, product_2=700, recommendation_type = "crosssell", active = True).create()
+        recommendation = Recommendation.find_by_product_1(400)
+
+
+    def test_find_by_product_2(self):
+        """ Find recommendation by product_2 id """
+        Recommendation(id=5, product_1=700, product_2=900, recommendation_type = "upsell", active = True).create()
+        Recommendation(id=6, product_1=800, product_2=901, recommendation_type = "crosssell", active = True).create()
+        recommendation = Recommendation.find_by_product_2(901)
+
+
+    def test_find_by_active(self):
+        """ Find recommendation by active status """
+        Recommendation(id=7, product_1=705, product_2=905, recommendation_type = "upsell", active = False).create()
+        Recommendation(id=8, product_1=805, product_2=910, recommendation_type = "crosssell", active = True).create()
+        recommendation = Recommendation.find_by_active(False)
+
+
+    def test_find_or_404_found(self):
+        """ Find or return 404 found """
+        recommendations = RecommendationFactory.create_batch(3)
+        for Recommendation in recommendations:
+            Recommendation.create()
+
+        recommendation = Recommendation.find_or_404(recommendations[1].id)
+
+
+    def test_find_or_404_not_found(self):
+        """ Find or return 404 NOT found """
+        self.assertRaises(NotFound, Recommendation.find_or_404, 0)
