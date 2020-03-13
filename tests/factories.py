@@ -16,7 +16,7 @@
 Recommendation Factory to make fake recommendations for testing
 """
 import factory
-from factory.fuzzy import FuzzyChoice
+from factory.fuzzy import FuzzyChoice, FuzzyInteger
 from service.models import Recommendation
 
 
@@ -30,9 +30,10 @@ class RecommendationFactory(factory.Factory):
     product_1 = FuzzyInteger(1, 999) # generates a random integer between 1 and 999 to represent the id of the first product
     product_2 = FuzzyInteger(1, 999) # generates a random integer between 1 and 999 to represent the id of the second product
     recommendation_type = FuzzyChoice(choices=["upsell", "crosssell", "accessory"]) # Up-sell: more expensive version of same product, Cross sell: similar price of same product, accessory: item that goes with product
+    active = FuzzyInteger(1) # 0 is FALSE and 1 is TRUE
 
 
 if __name__ == "__main__":
     for _ in range(10):
         recommendation = RecommendationFactory()
-        print(Recommendation.serialize())
+        print(recommendation.serialize())

@@ -1,5 +1,5 @@
 """
-Models for <your resource name>
+Models for Recommendation
 
 All of the models are stored in this module
 """
@@ -16,65 +16,86 @@ class DataValidationError(Exception):
     pass
 
 
-class YourResourceModel(db.Model):
+class Recommendation(db.Model):
     """
-    Class that represents a <your resource model name>
+    Class that represents a Recommendation
     """
 
     app = None
 
-    # Table Schema
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(63))
+    # RECOMMENDATION Table Schema
+    # each recommendation will hhve the following fields:
+    id = db.Column(db.Integer, primary_key=True) # id of this particular recommendation
+    product_1 = db.Column(db.Integer) # id of first product
+    product_2 = db.Column(db.Integer) # id of second product
+    recommendation_type = db.Column(db.String(63)) # Up-sell: more expensive version of same product, Cross sell: similar price of same product, accessory: item that goes with product
+    active = db.Column(db.Boolean) # Whether recommendation still exists or was removed
 
+
+    # DEV
     def __repr__(self):
-        return "<<your resource name> %r id=[%s]>" % (self.name, self.id)
+        return "Recommendation id=[%s]>" % (self.id)
 
+    # AJ
     def create(self):
         """
-        Creates a <your resource name> to the database
+        Creates a recommendation to the database
         """
-        logger.info("Creating %s", self.name)
+        logger.info("Creating %s", self.id)
         self.id = None  # id must be none to generate next primary key
         db.session.add(self)
         db.session.commit()
 
     def save(self):
         """
-        Updates a <your resource name> to the database
+        Updates a recommendation to the database
         """
-        logger.info("Saving %s", self.name)
+        logger.info("Saving %s", self.id)
         db.session.commit()
 
+    # AJ
     def delete(self):
-        """ Removes a <your resource name> from the data store """
-        logger.info("Deleting %s", self.name)
+        """ Removes a recommendation from the data store """
+        logger.info("Deleting %s", self.id)
         db.session.delete(self)
         db.session.commit()
 
+    # AJ
     def serialize(self):
-        """ Serializes a <your resource name> into a dictionary """
+        """ Serializes a recommendation into a dictionary """
         return {
             "id": self.id,
-            "name": self.name
+            "product_1": self.product_1,
+            "product_2": self.product_2,
+            "recommendation_type": self.recommendation_type,
+            "active": self.active,
         }
 
+    # AJ
     def deserialize(self, data):
         """
-        Deserializes a <your resource name> from a dictionary
+        Deserializes a recommendation from a dictionary
 
         Args:
             data (dict): A dictionary containing the resource data
         """
         try:
-            self.name = data["name"]
+            self.id = data["id"]
+            self.product_1 = data["product_1"]
+            self.product_2 = data["product_2"]
+            self.recommendation_type = data["recommendation_type"]
+            self.active = data["active"]
         except KeyError as error:
-            raise DataValidationError("Invalid <your resource name>: missing " + error.args[0])
+            raise DataValidationError("Invalid recommendation: missing " + error.args[0])
         except TypeError as error:
             raise DataValidationError(
-                "Invalid <your resource name>: body of request contained" "bad or no data"
+                "Invalid recommendation: body of request contained" "bad or no data"
             )
         return self
+
+    #######################################################################
+    # EVERYTHING BELOW HERE HAS BEEN UPDATED BY DEVNEEL - ALREADY COMPLETE
+    ######################################################################
 
     @classmethod
     def init_db(cls, app):
@@ -86,30 +107,64 @@ class YourResourceModel(db.Model):
         app.app_context().push()
         db.create_all()  # make our sqlalchemy tables
 
+#this is the list fuction
     @classmethod
     def all(cls):
-        """ Returns all of the <your resource name>s in the database """
-        logger.info("Processing all <your resource name>s")
+        """ Returns all of the Recommendations in the database """
+        logger.info("Processing all Recommendations")
         return cls.query.all()
 
+# GEORGE - These are complete but they are part of the read story
     @classmethod
-    def find(cls, by_id):
-        """ Finds a <your resource name> by it's ID """
-        logger.info("Processing lookup for id %s ...", by_id)
-        return cls.query.get(by_id)
+    def find(cls, id):
+        """ Finds a recommendation by it's ID """
+        logger.info("Processing lookup for id %s ...", id)
+        return cls.query.get(id)
 
     @classmethod
-    def find_or_404(cls, by_id):
-        """ Find a <your resource name> by it's id """
-        logger.info("Processing lookup or 404 for id %s ...", by_id)
-        return cls.query.get_or_404(by_id)
+    def find_or_404(cls, id):
+        """ Find a recommendation by it's id """
+        logger.info("Processing lookup or 404 for id %s ...", id)
+        return cls.query.get_or_404(id)
 
+#CLAIRE
     @classmethod
-    def find_by_name(cls, name):
-        """ Returns all <your resource name>s with the given name
+    def find_by_active(cls, active):
+        """ Returns all recommendations with the given active status
 
         Args:
-            name (string): the name of the <your resource name>s you want to match
+            active (integer): the recommendation's active status (0 for inactive and 1 for active)
         """
-        logger.info("Processing name query for %s ...", name)
-        return cls.query.filter(cls.name == name)
+        logger.info("Processing active status query for %s ...", active)
+        return cls.query.filter(cls.active == active)
+
+    @classmethod
+    def find_by_product_1(cls, product_1):
+        """ Returns all recommendations with product_1
+
+        Args:
+            product_1 (integer): the id of the first product
+        """
+        logger.info("Processing product_id query for %s ...", product_1)
+        return cls.query.filter(cls.product_1 == product_1)
+
+    @classmethod
+    def find_by_product_2(cls, product_2):
+        """ Returns all recommendations with product_2
+
+        Args:
+            product_2 (integer): the id of the second product
+        """
+        logger.info("Processing product_id query for %s ...", product_2)
+        return cls.query.filter(cls.product_2 == product_2)
+
+
+    @classmethod
+    def find_by_recommendation_type(cls, recommendation_type):
+        """ Returns all of the recommnedations of specified type (upsell, cross_sell, accessory)
+
+        Args:
+            recommendation_type (string): the recommendation_type of the two products
+        """
+        logger.info("Processing recommendation_type query for %s ...", recommendation_type)
+        return cls.query.filter(cls.recommendation_type == recommendation_type)
