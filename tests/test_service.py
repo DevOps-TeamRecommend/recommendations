@@ -60,7 +60,7 @@ class TestRecommendationServer(TestCase):
         resp = self.app.get("/")
         self.assertEqual(resp.status_code, status.HTTP_200_OK)
         data = resp.get_json()
-        self.assertEqual(data["name"], "Recommendation Demo REST API Service") 
+        self.assertEqual(data["name"], "Recommendation Demo REST API Service")
 
     def _create_recommendations(self, count):
         """ Factory method to create recommendations in bulk """
@@ -77,6 +77,22 @@ class TestRecommendationServer(TestCase):
             test_recommendation.id = new_recommendation["id"]
             recommendations.append(test_recommendation)
         return recommendations
+
+    def test_get_recommendation(self):
+        """ Get a single Recommendation """
+        # get the id of a recommendation
+        test_recommendation = self._create_recommendations(1)[0]
+        resp = self.app.get(
+            "/recommendations/{}".format(test_recommendation.id), content_type="application/json"
+        )
+        self.assertEqual(resp.status_code, status.HTTP_200_OK)
+        data = resp.get_json()
+        self.assertEqual(data["id"], test_recommendation.id)
+
+    def test_get_recommendation_not_found(self):
+        """ Get a Recommendation thats not found """
+        resp = self.app.get("/recommendations/0")
+        self.assertEqual(resp.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_create_recommendation(self):
         """ Create a new recommendation """
@@ -98,7 +114,7 @@ class TestRecommendationServer(TestCase):
         self.assertEqual(
             new_recommendation["active"], test_recommendation.active, "Status does not match"
         )
-        # TODO: Uncomment these and update attributes when location header is implemented 
+        # TODO: Uncomment these and update attributes when location header is implemented
         # Check that the location header was correct
         # resp = self.app.get(location, content_type="application/json")
         # self.assertEqual(resp.status_code, status.HTTP_200_OK)
@@ -110,7 +126,7 @@ class TestRecommendationServer(TestCase):
         # self.assertEqual(
         #     new_recommendation["available"], test_recommendation.available, "Availability does not match"
         # )
-    
+
     def test_bad_content_type(self):
         """ Create a recommendation with a bad content type """
         test_recommendation = RecommendationFactory()
@@ -128,10 +144,8 @@ class TestRecommendationServer(TestCase):
         self.assertEqual(resp.status_code, status.HTTP_204_NO_CONTENT)
         self.assertEqual(len(resp.data), 0)
         # make sure they are deleted
-        # TODO: uncomment this code when get is implemented 
+        # TODO: uncomment this code when get is implemented
         # resp = self.app.get(
         #     "/recommendations/{}".format(test_recommendation.id), content_type="application/json"
         # )
         # self.assertEqual(resp.status_code, status.HTTP_404_NOT_FOUND)
-
-    
