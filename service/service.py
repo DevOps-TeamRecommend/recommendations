@@ -120,6 +120,26 @@ def index():
             # paths=url_for("list_recommendations", _external=True),
 
 ######################################################################
+# LIST ALL RECOMMENDATIONS
+######################################################################
+@app.route("/recommendations", methods=["GET"])
+def list_recommendations():
+    """ Returns all of the Recommendations """
+    app.logger.info("Request for recommendation list")
+    recommendations = []
+    category = request.args.get("category")
+    name = request.args.get("name")
+    if category:
+        recommendations = Recommendation.find_by_category(category)
+    elif name:
+        recommendations = Recommendation.find_by_name(name)
+    else:
+        recommendations = Recommendation.all()
+
+    results = [recommendation.serialize() for recommendation in recommendations]
+    return make_response(jsonify(results), status.HTTP_200_OK)
+
+######################################################################
 # RETRIEVE A RECOMMENDATION
 ######################################################################
 @app.route("/recommendations/<int:recommendation_id>", methods=["GET"])

@@ -78,6 +78,14 @@ class TestRecommendationServer(TestCase):
             recommendations.append(test_recommendation)
         return recommendations
 
+    def test_get_recommendation_list(self):
+        """ Get a list of Recommendations """
+        self._create_recommendations(5)
+        resp = self.app.get("/recommendations")
+        self.assertEqual(resp.status_code, status.HTTP_200_OK)
+        data = resp.get_json()
+        self.assertEqual(len(data), 5)
+
     def test_get_recommendation(self):
         """ Get a single Recommendation """
         # get the id of a recommendation
