@@ -135,6 +135,27 @@ class TestRecommendationServer(TestCase):
         #     new_recommendation["available"], test_recommendation.available, "Availability does not match"
         # )
 
+    def test_update_recommendation(self):
+        """ Update an existing Recommendation """
+        # create a recommendation to update
+        test_recommendation = RecommendationFactory()
+        resp = self.app.post(
+            "/recommendations", json=test_recommendation.serialize(), content_type="application/json"
+        )
+        self.assertEqual(resp.status_code, status.HTTP_201_CREATED)
+
+        # update the recommendation
+        new_recommendation = resp.get_json()
+        new_recommendation["active"] = False
+        resp = self.app.put(
+            "/recommendations/{}".format(new_recommendation["id"]),
+            json=new_recommendation,
+            content_type="application/json",
+        )
+        self.assertEqual(resp.status_code, status.HTTP_200_OK)
+        updated_recommendation = resp.get_json()
+        self.assertEqual(updated_recommendation["active"], False)
+
     def test_bad_content_type(self):
         """ Create a recommendation with a bad content type """
         test_recommendation = RecommendationFactory()

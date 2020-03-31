@@ -3,11 +3,11 @@ RECOMMENDATIONS Service
 
 Paths:
 ------
-GET /recommendations - Returns a list all of the Recommendations ######################## CLAIRE - TODO
-GET /recommendations/{id} - Returns the Recommendation with a given id number ########## GEORGE - TODO
-POST /recommendations - creates a new Recommendation record in the database ############ AJ - TODO
-PUT /recommendations/{id} - updates a Recommendation record in the database ############ DEV - TODO
-DELETE /recommendations/{id} - deletes a Recommendation record in the database ######### AJ - TODO
+GET /recommendations - Returns a list all of the Recommendations #######################
+GET /recommendations/{id} - Returns the Recommendation with a given id number ##########
+POST /recommendations - creates a new Recommendation record in the database ############
+PUT /recommendations/{id} - updates a Recommendation record in the database ############
+DELETE /recommendations/{id} - deletes a Recommendation record in the database #########
 
 """
 
@@ -127,12 +127,9 @@ def list_recommendations():
     """ Returns all of the Recommendations """
     app.logger.info("Request for recommendation list")
     recommendations = []
-    category = request.args.get("category")
-    name = request.args.get("name")
-    if category:
-        recommendations = Recommendation.find_by_category(category)
-    elif name:
-        recommendations = Recommendation.find_by_name(name)
+    active = request.args.get("active")
+    if active:
+        recommendations = Recommendation.find_by_recommendation_type(active)
     else:
         recommendations = Recommendation.all()
 
@@ -174,6 +171,26 @@ def create_recommendations():
     return make_response(
         jsonify(message), status.HTTP_201_CREATED, {"Location": location_url}
     )
+
+######################################################################
+# UPDATE AN EXISTING RECOMMENDATION
+######################################################################
+@app.route("/recommendations/<int:recommendation_id>", methods=["PUT"])
+def update_recommendations(recommendation_id):
+    """
+    Update a Recommendation
+
+    This endpoint will update a Recommendation based the body that is posted
+    """
+    app.logger.info("Request to update recommendation with id: %s", recommendation_id)
+    check_content_type("application/json")
+    recommendation = Recommendation.find(recommendation_id)
+    if not recommendation:
+        raise NotFound("Recommendation with id '{}' was not found.".format(recommendation_id))
+    recommendation.deserialize(request.get_json())
+    recommendation.id = recommendation_id
+    recommendation.save()
+    return make_response(jsonify(recommendation.serialize()), status.HTTP_200_OK)
 
 ######################################################################
 # DELETE A RECOMMENDATION

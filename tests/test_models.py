@@ -75,6 +75,26 @@ class TestRecommendation(unittest.TestCase):
         recommendations = Recommendation.all()
         self.assertEqual(len(recommendations), 1)
 
+    def test_update_a_recommendation(self):
+        """ Update a Recommendation """
+        recommendation = RecommendationFactory()
+        logging.debug(recommendation)
+        recommendation.create()
+        logging.debug(recommendation)
+        self.assertEqual(recommendation.id, 1)
+        # Change it an save it
+        recommendation.recommendation_type = "accessory"
+        original_id = recommendation.id
+        recommendation.save()
+        self.assertEqual(recommendation.id, original_id)
+        self.assertEqual(recommendation.recommendation_type, "accessory")
+        # Fetch it back and make sure the id hasn't changed
+        # but the data did change
+        recommendations = Recommendation.all()
+        self.assertEqual(len(recommendations), 1)
+        self.assertEqual(recommendations[0].id, 1)
+        self.assertEqual(recommendations[0].recommendation_type, "accessory")
+
     def test_delete_a_recommendation(self):
         """ Delete a Recommendation """
         recommendation = RecommendationFactory()
