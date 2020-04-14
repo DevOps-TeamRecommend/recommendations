@@ -156,6 +156,28 @@ class TestRecommendationServer(TestCase):
         updated_recommendation = resp.get_json()
         self.assertEqual(updated_recommendation["active"], False)
 
+
+    def test_deactivate_recommendation(self):
+        """ Deactivate an existing Recommendation """
+        # create a recommendation to deactivate
+        test_recommendation = RecommendationFactory()
+        resp = self.app.post(
+            "/recommendations", json=test_recommendation.serialize(), content_type="application/json"
+        )
+        self.assertEqual(resp.status_code, status.HTTP_201_CREATED)
+
+        # deactivate the recommendation
+        new_recommendation = resp.get_json()
+        resp = self.app.put(
+            "/recommendations/{}/deactivate".format(new_recommendation["id"]),
+            json=new_recommendation,
+            content_type="application/json",
+        )
+        self.assertEqual(resp.status_code, status.HTTP_200_OK)
+        updated_recommendation = resp.get_json()
+        self.assertEqual(updated_recommendation["active"], False)
+
+
     def test_bad_content_type(self):
         """ Create a recommendation with a bad content type """
         test_recommendation = RecommendationFactory()

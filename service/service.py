@@ -193,6 +193,27 @@ def update_recommendations(recommendation_id):
     return make_response(jsonify(recommendation.serialize()), status.HTTP_200_OK)
 
 ######################################################################
+# DEACTIVATE AN EXISTING RECOMMENDATION
+######################################################################
+@app.route("/recommendations/<int:recommendation_id>/deactivate", methods=["PUT"])
+def deactivate_recommendations(recommendation_id):
+    """
+    Deactivate a Recommendation
+
+    This endpoint will deactivate a Recommendation based on the body that is posted
+    """
+    app.logger.info("Request to deactivate recommendation with id: %s", recommendation_id)
+    check_content_type("application/json")
+    recommendation = Recommendation.find(recommendation_id)
+    if not recommendation:
+        raise NotFound("Recommendation with id '{}' was not found.".format(recommendation_id))
+    recommendation.deserialize(request.get_json())
+    recommendation.id = recommendation_id
+    recommendation.active = 0
+    recommendation.save()
+    return make_response(jsonify(recommendation.serialize()), status.HTTP_200_OK)
+
+######################################################################
 # DELETE A RECOMMENDATION
 ######################################################################
 @app.route("/recommendations/<int:recommendation_id>", methods=["DELETE"])
