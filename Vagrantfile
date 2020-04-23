@@ -14,7 +14,7 @@ Vagrant.configure(2) do |config|
   # Forward CouchDB and Kubernetes ports
   config.vm.network "forwarded_port", guest: 8001, host: 8001, host_ip: "127.0.0.1"
   config.vm.network "forwarded_port", guest: 5984, host: 5984, host_ip: "127.0.0.1"
-  
+
   config.vm.network "private_network", ip: "192.168.33.10"
 
   # Provider-specific configuration
@@ -49,7 +49,7 @@ Vagrant.configure(2) do |config|
   if File.exists?(File.expand_path("~/.bluemix/apiKey.json"))
     config.vm.provision "file", source: "~/.bluemix/apiKey.json", destination: "~/.bluemix/apiKey.json"
   end
-    
+
   ######################################################################
   # Setup a Python 3 development environment
   ######################################################################
@@ -108,7 +108,7 @@ Vagrant.configure(2) do |config|
     # Show the GUI URL for Couch DB
     echo "\n"
     echo "CouchDB Admin GUI can be found at:\n"
-    echo "http://127.0.0.1:5984/_utils"    
+    echo "http://127.0.0.1:5984/_utils"
   SHELL
 
 end
