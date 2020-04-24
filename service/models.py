@@ -25,7 +25,7 @@ class Recommendation(db.Model):
 
     # RECOMMENDATION Table Schema
     # each recommendation will hhve the following fields:
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True) # id of this particular recommendation
+    id = db.Column(db.Integer, primary_key=True) # id of this particular recommendation
     product_1 = db.Column(db.Integer) # id of first product
     product_2 = db.Column(db.Integer) # id of second product
     recommendation_type = db.Column(db.String(63)) # Up-sell: more expensive version of same product, Cross sell: similar price of same product, accessory: item that goes with product
@@ -40,10 +40,6 @@ class Recommendation(db.Model):
         """
         Creates a recommendation to the database
         """
-        if self.product_1 is None:   # name is the only required field
-            raise DataValidationError('product_1 attribute is not set')
-        if self.product_2 is None:   # name is the only required field
-            raise DataValidationError('product_2 attribute is not set')
 
         logger.info("Creating %s", self.id)
         self.id = None  # id must be none to generate next primary key
@@ -75,7 +71,7 @@ class Recommendation(db.Model):
             "active": self.active,
         }
         if self.id:
-            recommendation['_id'] = self.id
+            recommendation['id'] = self.id
         return recommendation
 
     # AJ
@@ -92,7 +88,7 @@ class Recommendation(db.Model):
                 raise DataValidationError('product_1 must be an integer')
             self.product_1 = data["product_1"]
 
-            if not isinstance(data["product_2"], int): 
+            if not isinstance(data["product_2"], int):
                 raise DataValidationError('product_2 must be an integer')
             self.product_2 = data["product_2"]
 
