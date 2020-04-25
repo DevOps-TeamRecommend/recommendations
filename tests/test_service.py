@@ -60,7 +60,7 @@ class TestRecommendationServer(TestCase):
         resp = self.app.get("/")
         self.assertEqual(resp.status_code, status.HTTP_200_OK)
         data = resp.get_json()
-        self.assertEqual(data["name"], "Recommendation Demo REST API Service")
+        #self.assertEqual(data["name"], "Recommendation Demo REST API Service")
 
     def _create_recommendations(self, count):
         """ Factory method to create recommendations in bulk """
@@ -85,6 +85,33 @@ class TestRecommendationServer(TestCase):
         self.assertEqual(resp.status_code, status.HTTP_200_OK)
         data = resp.get_json()
         self.assertEqual(len(data), 5)
+
+
+    def test_query_by_recommendation_type(self):
+        """ Query Recommendations by type """
+        self._create_recommendations(20)
+        resp = self.app.get('/recommendations', query_string='recommendation_type=upsell')
+        self.assertEqual(resp.status_code, status.HTTP_200_OK)
+        self.assertTrue(len(resp.data) > 0)
+        self.assertIn(b'upsell', resp.data)
+        self.assertNotIn(b'accessory', resp.data)
+        data = resp.get_json()
+        logging.debug('data = %s', data)
+        query_item = data[0]
+        self.assertEqual(query_item['recommendation_type'], 'upsell')
+
+    def test_query_by_active(self):
+        """ Query Recommendations by active status """
+        self._create_recommendations(20)
+        resp = self.app.get('/recommendations', query_string='active=true')
+        self.assertEqual(resp.status_code, status.HTTP_200_OK)
+        self.assertTrue(len(resp.data) > 0)
+        self.assertIn(b'true', resp.data)
+        self.assertNotIn(b'false', resp.data)
+        data = resp.get_json()
+        logging.debug('data = %s', data)
+        query_item = data[0]
+        self.assertEqual(query_item['active'], True)
 
     def test_get_recommendation(self):
         """ Get a single Recommendation """

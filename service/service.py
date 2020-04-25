@@ -103,21 +103,16 @@ def internal_server_error(error):
         status.HTTP_500_INTERNAL_SERVER_ERROR,
     )
 
+
 ######################################################################
 # GET INDEX
 ######################################################################
-@app.route("/")
+@app.route('/')
 def index():
-    """ Root URL response """
-    return (
-        jsonify(
-            name="Recommendation Demo REST API Service",
-            version="1.0"
-        ),
-        status.HTTP_200_OK,
-    )
-            # TODO: UNCOMMENT this when list_recommendation is written
-            # paths=url_for("list_recommendations", _external=True),
+    # data = '{name: <string>, category: <string>}'
+    # url = request.base_url + 'pets' # url_for('list_pets')
+    # return jsonify(name='Pet Demo REST API Service', version='1.0', url=url, data=data), status.HTTP_200_OK
+    return app.send_static_file('index.html')
 
 ######################################################################
 # LIST ALL RECOMMENDATIONS
@@ -127,10 +122,20 @@ def list_recommendations():
     """ Returns all of the Recommendations """
     app.logger.info("Request for recommendation list")
     recommendations = []
+    recommendation_type = request.args.get("recommendation_type")
     active = request.args.get("active")
-    if active:
-        recommendations = Recommendation.find_by_recommendation_type(active)
+
+    if active:   # convert to boolean
+        active_bool = active.lower() in ['true', 'yes', '1']
+
+    if recommendation_type:
+        app.logger.info('Find by recommendation type: %s', recommendation_type)
+        recommendations = Recommendation.find_by_recommendation_type(recommendation_type)
+    elif active:
+        app.logger.info('Find by active: %s', active)
+        recommendations = Recommendation.find_by_active(active_bool)
     else:
+        app.logger.info('Find all recs')
         recommendations = Recommendation.all()
 
     results = [recommendation.serialize() for recommendation in recommendations]
@@ -151,9 +156,9 @@ def get_recommendations(recommendation_id):
         raise NotFound("Recommendation with id '{}' was not found.".format(recommendation_id))
     return make_response(jsonify(recommendation.serialize()), status.HTTP_200_OK)
 
-######################################################################
-# ADD A NEW RECOMMENDATION
-######################################################################
+# ######################################################################
+# # ADD A NEW RECOMMENDATION
+# ######################################################################
 @app.route("/recommendations", methods=["POST"])
 def create_recommendations():
     """
@@ -166,7 +171,9 @@ def create_recommendations():
     recommendation.deserialize(request.get_json())
     recommendation.create()
     message = recommendation.serialize()
-    location_url  = url_for("get_recommendations", recommendation_id=recommendation.id, _external=True)
+    app.logger.info('Recommendation with new id [%s] saved!', recommendation.id)
+    app.logger.info(recommendation)
+    # location_url  = url_for("get_recommendations", recommendation_id=recommendation.id, _external=True)
     location_url = "unimplemented"
     return make_response(
         jsonify(message), status.HTTP_201_CREATED, {"Location": location_url}
@@ -190,6 +197,7 @@ def update_recommendations(recommendation_id):
     recommendation.deserialize(request.get_json())
     recommendation.id = recommendation_id
     recommendation.save()
+    app.logger.info("recommendation with id %s has been updated!", recommendation_id)
     return make_response(jsonify(recommendation.serialize()), status.HTTP_200_OK)
 
 ######################################################################
