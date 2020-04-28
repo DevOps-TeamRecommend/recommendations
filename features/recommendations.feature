@@ -44,7 +44,7 @@ Scenario: List all recommendations
     And I press the "Search" button
     Then I should see "10001" in the results
     And I should see "31001" in the results
-    And I should not see "coffee" in the results
+    And I should not see "23001" in the results
 
 Scenario: List all accessories
     When I visit the "Home Page"
@@ -52,7 +52,7 @@ Scenario: List all accessories
     And I press the "Search" button
     Then I should see "10001" in the results
     And I should not see "31001" in the results
-    And I should not see "roomba" in the results
+    And I should not see "42001" in the results
 
 Scenario: Update a Recommendation
     When I visit the "Home Page"
