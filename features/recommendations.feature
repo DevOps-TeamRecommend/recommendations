@@ -19,10 +19,10 @@ Scenario: The server is running
 
 Scenario: Create a Recommendation
     When I visit the "Home Page"
-    And I set the "id" to "xxx"
-    And I set the "product_1" to "xxx"
-    And I set the "product_2" to "xxx"
-    And I set the "recommendation_type" to "xxx"
+    And I set the "id" to "123"
+    And I set the "product_1" to "shampoo"
+    And I set the "product_2" to "hairbrush"
+    And I set the "recommendation_type" to "accessory"
     And I select "True" in the "Active" dropdown
     And I press the "Create" button
     Then I should see the message "Success"
