@@ -29,9 +29,6 @@ def step_impl(context):
     for rec in context.resp.json():
         context.resp = requests.delete(context.base_url + '/recommendations/' + str(rec["id"]), headers=headers)
         expect(context.resp.status_code).to_equal(204)
-
-    # load the database with recommendations   
-    
     create_url = context.base_url + '/recommendations'
     for row in context.table:
         data = {
