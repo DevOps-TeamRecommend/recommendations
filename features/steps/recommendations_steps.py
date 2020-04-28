@@ -23,16 +23,22 @@ WAIT_SECONDS = int(getenv('WAIT_SECONDS', '60'))
 def step_impl(context):
     """ Delete all Recommendations and load new ones """
     headers = {'Content-Type': 'application/json'}
-    context.resp = requests.delete(context.base_url + '/recommendations/reset', headers=headers)
-    expect(context.resp.status_code).to_equal(204)
+    # list all of the recommendations and delete them one by one
+    context.resp = requests.get(context.base_url + '/recommendations', headers=headers)
+    expect(context.resp.status_code).to_equal(200)
+    for rec in context.resp.json():
+        context.resp = requests.delete(context.base_url + '/recommendations/' + str(rec["id"]), headers=headers)
+        expect(context.resp.status_code).to_equal(204)
+
+    # load the database with recommendations   
+    
     create_url = context.base_url + '/recommendations'
     for row in context.table:
         data = {
-            "id": row['id'],
-            "product_1": row['product_1'],
-            "product_2": row['product_2'],
+            "product_1": int(row['product_1']),
+            "product_2": int(row['product_2']),
             "recommendation_type": row['recommendation_type'],
-            "active": row['active'] in ['True', 'true', 'true','true' '1']
+            "active": row['active'] in ['True', 'true', '1']
             }
         payload = json.dumps(data)
         context.resp = requests.post(create_url, data=payload, headers=headers)
