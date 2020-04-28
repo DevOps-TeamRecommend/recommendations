@@ -7,23 +7,22 @@ Feature: The ecommerce service back-end
 
 Background:
     Given the following recommendations
-        | id         | product_1   | product_2   | recommendation_type | active |
-        | 123        | shampoo     | hairbrush   | accessory           | True   |
-        | 456        | Timex Watch | Rolex Watch | upsell              | True   |
-        | 789        | roomba      | deebot      | cross sell          | False  |
+        | product_1   | product_2   | recommendation_type | active |
+        | 10001       | 10002       | accessory           | True   |
+        | 42001       | 42002       | upsell              | True   |
+        | 31001       | 31001       | cross sell          | False  |
 
 Scenario: The server is running
     When I visit the "Home Page"
-    Then I should see "Pet Demo RESTful Service" in the title
+    Then I should see "Recommendation Demo RESTful Service" in the title
     And I should not see "404 Not Found"
 
 Scenario: Create a Recommendation
     When I visit the "Home Page"
-    And I set the "id" to "123"
-    And I set the "product_1" to "shampoo"
-    And I set the "product_2" to "hairbrush"
+    And I set the "product_1" to "10001"
+    And I set the "product_2" to "10002"
     And I set the "recommendation_type" to "accessory"
-    And I select "True" in the "Active" dropdown
+    And I select "True" in the "active" dropdown
     And I press the "Create" button
     Then I should see the message "Success"
     When I copy the "Id" field
@@ -34,26 +33,28 @@ Scenario: Create a Recommendation
     And the "recommendation_type" field should be empty
     When I paste the "Id" field
     And I press the "Retrieve" button
-    Then I should see "shampoo" in the "product_1" field
-    And I should see "hairbrush" in the "product_2" field
-    And I should see "accessory" in the "recommendation_type" field
+    Then I should see "f" in the "product_1" field
+    And I should see "10002" in the "product_2" field
+    And I should see "accessory" in the "recommendation_type" field 
+    And I should see "True" in the "active" dropdown
 
-Scenario: List all pets
+
+Scenario: List all recommendations
     When I visit the "Home Page"
     And I press the "Search" button
-    Then I should see "shampoo" in the results
-    And I should see "deebot" in the results
-    And I should not see "dog" in the results
+    Then I should see "10001" in the results
+    And I should see "31001" in the results
+    And I should not see "coffee" in the results
 
-Scenario: List all dogs
+Scenario: List all accessories
     When I visit the "Home Page"
-    And I set the "Category" to "dog"
+    And I set the "recommendation_type" to "accessory"
     And I press the "Search" button
-    Then I should see "fido" in the results
-    And I should not see "kitty" in the results
-    And I should not see "leo" in the results
+    Then I should see "10001" in the results
+    And I should not see "31001" in the results
+    And I should not see "roomba" in the results
 
-Scenario: Update a Pet
+Scenario: Update a Recommendation
     When I visit the "Home Page"
     And I set the "Name" to "fido"
     And I press the "Search" button
@@ -76,22 +77,22 @@ Scenario: Read a recommendation
     When I visit the "Home Page"
     And I set the "recommendation_type" to "accessory"
     And I press the "Search" button
-    Then I should see "hairbrush" in the results
+    Then I should see "10002" in the results
     When I copy the "id" field
     And I press the "Clear" button
     Then the "id" field should be empty
     And the "product_2" field should be empty
     When I paste the "id" field
     And I press the "Retrieve" button
-    Then I should see "shampoo" in the "product_1" field
-    And I should see "hairbrush" in the "product_2" field
+    Then I should see "10001" in the "product_1" field
+    And I should see "10002" in the "product_2" field
     And I should see "accessory" in the "recommendation_type" field
 
 Scenario: Delete a recommendation
     When I visit the "Home Page"
     And I set the "recommendation_type" to "accessory"
     And I press the "Search" button
-    Then I should see "hairbrush" in the results
+    Then I should see "10002" in the results
     When I copy the "id" field
     And I press the "Clear" button
     Then the "id" field should be empty

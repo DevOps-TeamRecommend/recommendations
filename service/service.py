@@ -220,6 +220,9 @@ def deactivate_recommendations(recommendation_id):
     recommendation.active = 0
     recommendation.save()
     return make_response(jsonify(recommendation.serialize()), status.HTTP_200_OK)
+    if recommendation:
+        recommendation.delete()
+    return make_response('', status.HTTP_204_NO_CONTENT)
 
 ######################################################################
 # DELETE A RECOMMENDATION
