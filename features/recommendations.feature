@@ -1,14 +1,16 @@
-Feature: The pet store service back-end
-    As a Pet Store Owner
-    I need a RESTful catalog service
-    So that I can keep track of all my pets
+Feature: The ecommerce service back-end
+    As a Customer
+    I want recommendations
+    So that I can see similar and adjacent products incase there is a product that better suits
+    my need, is cheaper, will make my experience better, or I might want to purchase in the future.
+
 
 Background:
-    Given the following pets
-        | name       | category | available |
-        | fido       | dog      | True      |
-        | kitty      | cat      | True      |
-        | leo        | lion     | False     |
+    Given the following recommendations
+        | id         | product_1   | product_2   | recommendation_type | active |
+        | 123        | shampoo     | hairbrush   | accessory           | True   |
+        | 456        | Timex Watch | Rolex Watch | upsell              | True   |
+        | 789        | roomba      | deebot      | cross sell          | False  |
 
 Scenario: The server is running
     When I visit the "Home Page"
@@ -66,3 +68,31 @@ Scenario: Update a Pet
     And I press the "Search" button
     Then I should see "Boxer" in the results
     Then I should not see "fido" in the results
+
+Scenario: Read a recommendation
+    When I visit the "Home Page"
+    And I set the "recommendation_type" to "accessory"
+    And I press the "Search" button
+    Then I should see "hairbrush" in the results
+    When I copy the "id" field
+    And I press the "Clear" button
+    Then the "id" field should be empty
+    And the "product_2" field should be empty
+    When I paste the "id" field
+    And I press the "Retrieve" button
+    Then I should see "shampoo" in the "product_1" field
+    And I should see "hairbrush" in the "product_2" field
+    And I should see "accessory" in the "recommendation_type" field
+
+Scenario: Delete a recommendation
+    When I visit the "Home Page"
+    And I set the "recommendation_type" to "accessory"
+    And I press the "Search" button
+    Then I should see "hairbrush" in the results
+    When I copy the "id" field
+    And I press the "Clear" button
+    Then the "id" field should be empty
+    And the "product_2" field should be empty
+    When I paste the "id" field
+    And I press the "Delete" button
+    Then I should see the message "Recommendation Successfully Deleted"
