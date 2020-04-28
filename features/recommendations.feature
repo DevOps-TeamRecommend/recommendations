@@ -38,6 +38,7 @@ Scenario: Create a Recommendation
     And I should see "accessory" in the "recommendation_type" field 
     And I should see "True" in the "active" dropdown
 
+
 Scenario: List all recommendations
     When I visit the "Home Page"
     And I press the "Search" button
