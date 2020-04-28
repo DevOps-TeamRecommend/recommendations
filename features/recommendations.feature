@@ -54,24 +54,40 @@ Scenario: List all accessories
     And I should not see "31001" in the results
     And I should not see "42001" in the results
 
+Scenario: Query a recommendation 
+
+    When I visit the "Home Page"
+    And I set the "recommendation_type" to "accessory"
+    And I press the "Search" button
+    Then I should see "10001" in the results
+    When I copy the "id" field
+    And I press the "Clear" button
+    Then the "id" field should be empty
+    And the "product_1" field should be empty
+    When I paste the "id" field
+    And I press the "Retrieve" button
+    Then I should see "10001" in the results
+    And I should not see "31001" in the results
+    And I should not see "42001" in the results
+
 Scenario: Update a Recommendation
     When I visit the "Home Page"
-    And I set the "Name" to "fido"
+    And I set "product_1" to "10001"
     And I press the "Search" button
-    Then I should see "fido" in the "Name" field
-    And I should see "dog" in the "Category" field
-    When I change "Name" to "Boxer"
+    Then I should see "10001" in the "product_1" field
+    And I should see "10002" in the "product_2" field
+    When I change "product_1" to "21001"
     And I press the "Update" button
     Then I should see the message "Success"
     When I copy the "Id" field
     And I press the "Clear" button
     And I paste the "Id" field
     And I press the "Retrieve" button
-    Then I should see "Boxer" in the "Name" field
+    Then I should see "21001" in the "product_1" field
     When I press the "Clear" button
     And I press the "Search" button
-    Then I should see "Boxer" in the results
-    Then I should not see "fido" in the results
+    Then I should see "21001" in the results
+    Then I should not see "10001" in the results
 
 Scenario: Read a recommendation
     When I visit the "Home Page"
@@ -100,3 +116,13 @@ Scenario: Delete a recommendation
     When I paste the "id" field
     And I press the "Delete" button
     Then I should see the message "Recommendation Successfully Deleted"
+
+    Scenario: Deactivate a Recommendation
+        When I visit the "Home Page"
+        And I set the "product_1" to "10001"
+        And I press the "Search" button
+        Then I should see "10001" in the "product_1" field
+        And I should see "10002" in the "product_2" field
+        When I change "active" to "False"
+        And I press the "Update" button
+        Then I should see the message "Recommendation in-active"
