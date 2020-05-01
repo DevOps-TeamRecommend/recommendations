@@ -71,7 +71,7 @@ class Recommendation(db.Model):
             "active": self.active,
         }
         if self.id:
-            recommendation['id'] = self.id
+            recommendation['_id'] = self.id
         return recommendation
 
     # AJ
