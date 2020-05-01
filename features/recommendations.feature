@@ -21,7 +21,7 @@ Scenario: Create a Recommendation
     When I visit the "Home Page"
     And I set the "product_1" to "10001"
     And I set the "product_2" to "10002"
-    And I set the "recommendation_type" to "accessory"
+    And I select "Accessory" in the "recommendation_type" dropdown
     And I select "True" in the "active" dropdown
     And I press the "Create" button
     Then I should see the message "Success"
@@ -33,14 +33,15 @@ Scenario: Create a Recommendation
     And the "recommendation_type" field should be empty
     When I paste the "Id" field
     And I press the "Retrieve" button
-    Then I should see "f" in the "product_1" field
+    Then I should see "10001" in the "product_1" field
     And I should see "10002" in the "product_2" field
-    And I should see "accessory" in the "recommendation_type" field 
+    And I should see "Accessory" in the "recommendation_type" dropdown 
     And I should see "True" in the "active" dropdown
 
 
 Scenario: List all recommendations
     When I visit the "Home Page"
+    When I press the "Clear" button
     And I press the "Search" button
     Then I should see "10001" in the results
     And I should see "31001" in the results
@@ -48,7 +49,7 @@ Scenario: List all recommendations
 
 Scenario: List all accessories
     When I visit the "Home Page"
-    And I set the "recommendation_type" to "accessory"
+    And I select "Accessory" in the "recommendation_type" dropdown
     And I press the "Search" button
     Then I should see "10001" in the results
     And I should not see "31001" in the results
@@ -57,7 +58,7 @@ Scenario: List all accessories
 Scenario: Query a recommendation 
 
     When I visit the "Home Page"
-    And I set the "recommendation_type" to "accessory"
+    And I select "Accessory" in the "recommendation_type" dropdown
     And I press the "Search" button
     Then I should see "10001" in the results
     When I copy the "id" field
@@ -72,10 +73,10 @@ Scenario: Query a recommendation
 
 Scenario: Update a Recommendation
     When I visit the "Home Page"
-    And I set "product_1" to "10001"
+    And I press the "Clear" button
+    And I set the "product_1" to "10001"
     And I press the "Search" button
     Then I should see "10001" in the "product_1" field
-    And I should see "10002" in the "product_2" field
     When I change "product_1" to "21001"
     And I press the "Update" button
     Then I should see the message "Success"
@@ -91,7 +92,8 @@ Scenario: Update a Recommendation
 
 Scenario: Read a recommendation
     When I visit the "Home Page"
-    And I set the "recommendation_type" to "accessory"
+    And I press the "Clear" button
+    And I select "Accessory" in the "recommendation_type" dropdown
     And I press the "Search" button
     Then I should see "10002" in the results
     When I copy the "id" field
@@ -102,11 +104,11 @@ Scenario: Read a recommendation
     And I press the "Retrieve" button
     Then I should see "10001" in the "product_1" field
     And I should see "10002" in the "product_2" field
-    And I should see "accessory" in the "recommendation_type" field
+    And I should see "Accessory" in the "recommendation_type" dropdown
 
 Scenario: Delete a recommendation
     When I visit the "Home Page"
-    And I set the "recommendation_type" to "accessory"
+    And I select "Accessory" in the "recommendation_type" dropdown
     And I press the "Search" button
     Then I should see "10002" in the results
     When I copy the "id" field
@@ -115,14 +117,15 @@ Scenario: Delete a recommendation
     And the "product_2" field should be empty
     When I paste the "id" field
     And I press the "Delete" button
-    Then I should see the message "Recommendation Successfully Deleted"
+    Then I should see the message "Recommendation has been Deleted!"
 
-    Scenario: Deactivate a Recommendation
-        When I visit the "Home Page"
-        And I set the "product_1" to "10001"
-        And I press the "Search" button
-        Then I should see "10001" in the "product_1" field
-        And I should see "10002" in the "product_2" field
-        When I change "active" to "False"
-        And I press the "Update" button
-        Then I should see the message "Recommendation in-active"
+Scenario: Deactivate a Recommendation
+    When I visit the "Home Page"
+    And I press the "Clear" button
+    And I set the "product_1" to "10001"
+    And I press the "Search" button
+    Then I should see "10001" in the "product_1" field
+    And I should see "10002" in the "product_2" field
+    When I select "False" in the "active" dropdown
+    And I press the "Update" button
+    Then I should see the message "Success"

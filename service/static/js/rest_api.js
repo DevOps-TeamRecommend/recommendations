@@ -6,10 +6,10 @@ $(function () {
 
     // Updates the form with data from the response
     function update_form_data(res) {
-        $("#recommendation_id").val(res._id);
-        $("#product_1").val(res.product_1);
-        $("#product_2").val(res.product_2);
-        $("#recommendation_type").val(res.recommendation_type);
+        $("#recommendation_id").val(res.id);
+        $("#recommendation_product_1").val(res.product_1);
+        $("#recommendation_product_2").val(res.product_2);
+        $("#recommendation_recommendation_type").val(res.recommendation_type);
         if (res.active == true) {
             $("#recommendation_active").val("true");
         } else {
@@ -19,9 +19,9 @@ $(function () {
 
     /// Clears all form fields
     function clear_form_data() {
-        $("#product_1").val("");
-        $("#product_2").val("");
-        $("#recommendation_type").val("");
+        $("#recommendation_product_1").val("");
+        $("#recommendation_product_2").val("");
+        $("#recommendation_recommendation_type").val("");
         $("#recommendation_active").val("");
     }
 
@@ -37,9 +37,9 @@ $(function () {
 
     $("#create-btn").click(function () {
 
-        var product_1 = parseInt($("#product_1").val());
-        var product_2 = parseInt($("#product_2").val());
-        var recommendation_type = $("#recommendation_type").val();
+        var product_1 = parseInt($("#recommendation_product_1").val());
+        var product_2 = parseInt($("#recommendation_product_2").val());
+        var recommendation_type = $("#recommendation_recommendation_type").val();
         var active = $("#recommendation_active").val() == "true";
 
         var data = {
@@ -74,9 +74,9 @@ $(function () {
     $("#update-btn").click(function () {
 
         var recommendation_id = parseInt($("#recommendation_id").val());
-        var product_1 = parseInt($("#product_1").val());
-        var product_2 = parseInt($("#product_2").val());
-        var recommendation_type = $("#recommendation_type").val();
+        var product_1 = parseInt($("#recommendation_product_1").val());
+        var product_2 = parseInt($("#recommendation_product_2").val());
+        var recommendation_type = $("#recommendation_recommendation_type").val();
         var active = $("#recommendation_active").val() == 'true';
         console.log(active)
         var data = {
@@ -110,7 +110,7 @@ $(function () {
 
     $("#retrieve-btn").click(function () {
 
-        var recommendation_id = $("#recommendation_id").val();
+        var recommendation_id = parseInt($("#recommendation_id").val());
 
         var ajax = $.ajax({
             type: "GET",
@@ -172,9 +172,10 @@ $(function () {
 
     $("#search-btn").click(function () {
 
-        var product_1 = $("#product_1").val();
-        var product_2 = $("#product_2").val();
-        var recommendation_type = $("#recommendation_type").val();
+        
+        var product_1 = $("#recommendation_product_1").val();
+        var product_2 = $("#recommendation_product_2").val();
+        var recommendation_type = $("#recommendation_recommendation_type").val();
         var active = $("#recommendation_active").val();
 
         var queryString = ""
@@ -213,7 +214,7 @@ $(function () {
             var firstRecommendation = "";
             for(var i = 0; i < res.length; i++) {
                 var recommendation = res[i];
-                var row = "<tr><td>"+recommendation._id+"</td><td>"+recommendation.product_1+"</td><td>"+recommendation.product_2+"</td><td>"+recommendation.recommendation_type+"</td><td>"+recommendation.active+"</td></tr>";
+                var row = "<tr><td>"+recommendation.id+"</td><td>"+recommendation.product_1+"</td><td>"+recommendation.product_2+"</td><td>"+recommendation.recommendation_type+"</td><td>"+recommendation.active+"</td></tr>";
                 $("#search_results").append(row);
                 if (i == 0) {
                     firstRecommendation = recommendation;
@@ -222,7 +223,10 @@ $(function () {
 
             $("#search_results").append('</table>');
 
-
+            // copy the first result to the form
+            if (firstRecommendation != "") {
+                update_form_data(firstRecommendation)
+            }
             flash_message("Success")
         });
 
