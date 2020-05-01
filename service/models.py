@@ -71,7 +71,7 @@ class Recommendation(db.Model):
             "active": self.active,
         }
         if self.id:
-            recommendation['_id'] = self.id
+            recommendation['id'] = self.id
         return recommendation
 
     # AJ
@@ -103,8 +103,8 @@ class Recommendation(db.Model):
 
 
         # if there is no id and the data has one, assign it
-        if not self.id and '_id' in data:
-            self.id = data['_id']
+        if not self.id and 'id' in data:
+            self.id = data['id']
 
         return self
 
