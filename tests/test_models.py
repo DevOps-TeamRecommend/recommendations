@@ -5,6 +5,7 @@ Test cases for Recommendations Model
 import logging
 import unittest
 import os
+import json
 from werkzeug.exceptions import NotFound
 from service.models import Recommendation, DataValidationError, db
 from service import app
