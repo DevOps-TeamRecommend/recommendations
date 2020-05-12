@@ -10,10 +10,15 @@ from service.models import Recommendation, DataValidationError, db
 from service import app
 from .factories import RecommendationFactory
 
-# ADDED BY DEV
+# DATABASE_URI = os.getenv('DATABASE_URI', 'sqlite:///../db/test.db')
 DATABASE_URI = os.getenv(
     "DATABASE_URI", "postgres://postgres:postgres@localhost:5432/postgres"
 )
+
+# GET DATABASE SETUP FOR LOCAL OR PROD
+if 'VCAP_SERVICES' in os.environ:
+    vcap = json.loads(os.environ['VCAP_SERVICES'])
+    DATABASE_URI = vcap['user-provided'][0]['credentials']['url']
 
 ######################################################################
 #  Recommendation   M O D E L   T E S T   C A S E S
